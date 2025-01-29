@@ -4,13 +4,15 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient();
 
-const AppQueryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    return (
-        <QueryClientProvider client={queryClient}>
-            {children}
-            <ReactQueryDevtools initialIsOpen={true}/>
-        </QueryClientProvider>
-    )
+const AppQueryProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={true} />
+    </QueryClientProvider>
+  );
 };
 
 export default AppQueryProvider;
