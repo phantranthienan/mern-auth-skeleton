@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
-import { registerUser } from '@/services/auth.service';
+import { loginUser, refreshAccessToken, registerUser } from '@/services/auth.service';
 import { successResponse } from '@/utils/response.util';
 
+import { refreshTokenCookieOptions } from '@/config/cookies';
 import { MESSAGES } from '@/constants/messages';
 import { ApiResponse } from '@/types/responses/response.types';
-import { RegisterRequestBody } from '@/types/requests/auth.requests';
-import { RegisterResponseData } from '@/types/responses/auth.responses';
+import { RegisterRequestBody, LoginRequestBody } from '@/types/requests/auth.requests';
+import { RegisterResponseData, LoginResponseData, RefreshTokenResponseData } from '@/types/responses/auth.responses';
 
 export const registerController = async (
     req: Request<{},{},RegisterRequestBody>, 
@@ -14,19 +15,56 @@ export const registerController = async (
     const { email, password } = req.body;
     const newUser = await registerUser(email, password);
 
-    const response = successResponse<RegisterResponseData>(MESSAGES.USER_REGISTERED, {
-        ...newUser,
-        _id: newUser._id.toString(),
-    });
+    const response = successResponse<RegisterResponseData>(
+        MESSAGES.USER_REGISTERED, 
+        { 
+            ...newUser,
+            _id: newUser._id.toString(),
+        }
+    );
 
     res.status(201).json(response);
 };
 
-export const loginController = async (req: Request, res: Response) => {
-    res.send('Login');
-}
+export const loginController = async (
+    req: Request<{}, {}, LoginRequestBody>, 
+    res: Response<ApiResponse<LoginResponseData>>
+) => {
+    const { email, password } = req.body;
+    const { accessToken, refreshToken } = await loginUser(email, password);
+
+    res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
+
+    const response = successResponse<LoginResponseData>(
+        MESSAGES.USER_LOGGED_IN, 
+        { accessToken }
+    );
+
+    res.status(200).json(response);
+};
 
 
-export const logoutController = async (req: Request, res: Response) => {
-    res.send('Logout');
-}
+export const logoutController = async (
+    req: Request,
+    res: Response<ApiResponse<null>>
+) => {
+    res.clearCookie('refreshToken', refreshTokenCookieOptions);
+
+    const response = successResponse<null>(MESSAGES.USER_LOGGED_OUT, null);
+    res.status(200).json(response);
+};
+
+export const refreshTokenController = async (
+    req: Request, 
+    res: Response<ApiResponse<RefreshTokenResponseData>>
+) => {
+    const refreshToken = req.cookies.refreshToken;
+    const newAccessToken = await refreshAccessToken(refreshToken);
+
+    const response = successResponse<RefreshTokenResponseData>(
+        MESSAGES.NEW_TOKEN_GENERATED, 
+        { accessToken: newAccessToken }
+    );
+    
+    res.status(200).json(response);
+};

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 
-import { ApiError } from '@/errors/api-error'
+import { ApiError } from '@/errors/api.errors'
 import { ApiResponse } from '@/types/responses/response.types';
 import { errorResponse } from '@/utils/response.util';
 import { MESSAGES } from '@/constants/messages';

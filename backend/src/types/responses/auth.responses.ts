@@ -9,5 +9,9 @@ export interface RegisterResponseData {
 }
 
 export interface LoginResponseData {
-    //
+    accessToken: string,
+}
+
+export interface RefreshTokenResponseData {
+    accessToken: string,
 }

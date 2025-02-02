@@ -12,14 +12,15 @@ import { connectDB, disconnectDB, checkDBConnection } from '@/config/db';
 import { rateLimiter } from '@/config/rate-limiter';
 import { corsOptions } from '@/config/cors';
 import { setupSwagger } from '@/config/swagger';
+import { ENV } from '@/config/env';
 
 import { notFoundHandler } from './middlewares/notfound.middleware';
 import { errorHandler } from './middlewares/error.middleware';
 import appRouter from '@/routes';
-import { set } from 'mongoose';
-
 
 const app = express();
+
+console.log(ENV);
 
 // Connect to MongoDB
 connectDB();
