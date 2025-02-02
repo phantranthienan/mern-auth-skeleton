@@ -1,21 +1,6 @@
-import { Schema, HydratedDocument, model } from 'mongoose';
+import { Schema, InferSchemaType, HydratedDocument, model } from 'mongoose';
 
-// Types definition
-export interface UserInterface {
-    username: string;
-    email: string;
-    password: string;
-    isVerified: boolean;
-    // resetPasswordToken: string;
-    // resetPasswordExpiresAt: Date;
-    // verificationToken: string;
-    // verificationTokenExpiresAt: Date;
-} 
-
-// UserDocument to work with mongoose
-export type UserDocument = HydratedDocument<UserInterface>;
-
-const userSchema = new Schema<UserInterface>({
+const userSchema = new Schema({
     email: {
         type: String,
         required: true,
@@ -44,46 +29,19 @@ const userSchema = new Schema<UserInterface>({
     // verificationTokenExpiresAt: Date,
 });
 
-userSchema.set('toJSON', {
-    transform: (_, ret) => {
-        delete ret.__v;
-        delete ret.password;
-        // delete ret.resetPasswordToken;
-        // delete ret.resetPasswordExpiresAt;
-        // delete ret.verificationToken;
-        // delete ret.verificationTokenExpiresAt;
-    },
-});
-
-export const User = model<UserInterface>('User', userSchema);
-
-
-// HELPER FUNCTIONS
-
-export const createUser = async (userData: Partial<UserInterface>): Promise<UserDocument> => {
-    try {
-        const user = new User(userData);
-        return await user.save();
-    } catch (error) {
-        console.error(error);
-        throw new Error(`Error creating user: ${error}`);
-    }
+const transformFunction = (_: any, ret: any) => {
+    delete ret.__v;
+    delete ret.password;
+    // delete ret.resetPasswordToken;
+    // delete ret.resetPasswordExpiresAt;
+    // delete ret.verificationToken;
+    // delete ret.verificationTokenExpiresAt;
 };
+  
+userSchema.set('toObject', { transform: transformFunction });
+userSchema.set('toJSON', { transform: transformFunction });
 
-export const findUserById = async (id: string): Promise<UserDocument | null> => {
-    try {
-        return await User.findById(id);
-    } catch (error) {
-        console.error(error);
-        throw new Error(`Error finding user by id: ${error}`);
-    }
-};
+export type UserType = InferSchemaType<typeof userSchema>;
+export type UserDocument = HydratedDocument<UserType>;
 
-export const findUserByEmail = async (email: string) => {
-    try {
-        return await User.findOne({ email });
-    } catch (error) {
-        console.error(error);
-        throw new Error(`Error finding user by email: ${error}`);
-    }
-};
+export const User = model<UserDocument>('User', userSchema);

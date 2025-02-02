@@ -14,7 +14,7 @@ export const registerController = async (
     const { email, password } = req.body;
     const newUser = await registerUser(email, password);
 
-    const response = successResponse(MESSAGES.USER_REGISTERED, {
+    const response = successResponse<RegisterResponseData>(MESSAGES.USER_REGISTERED, {
         ...newUser,
         _id: newUser._id.toString(),
     });

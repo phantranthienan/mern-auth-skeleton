@@ -23,7 +23,9 @@ export const registerUser = async (email: string, password: string) => {
     });
     await newUser.save();
 
-    return newUser;
+    const userObject = newUser.toObject();
+
+    return userObject;
 };
 
 export const loginUser = async (email: string, password: string) => {
