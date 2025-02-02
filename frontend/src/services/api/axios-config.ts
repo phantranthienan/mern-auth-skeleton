@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { tokenManager } from '../../utils/tokenManager';
+import { tokenManager } from '../../utils/token-manager';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,

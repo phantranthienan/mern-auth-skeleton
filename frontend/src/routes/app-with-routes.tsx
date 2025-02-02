@@ -1,14 +1,14 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Loading from '@/components/ui/Loading';
-import AuthLayout from '@/layouts/AuthLayout';
+import Loading from '@/components/ui/loading';
+import AuthLayout from '@/layouts/auth-layout';
 
-const Home = lazy(() => import('@/pages/Home'));
-const Login = lazy(() => import('@/pages/auth/Login'));
-const Register = lazy(() => import('@/pages/auth/Register'));
-const NotFound = lazy(() => import('@/pages/NotFound'));
+const Home = lazy(() => import('@/pages/home'));
+const Login = lazy(() => import('@/pages/auth/login'));
+const Register = lazy(() => import('@/pages/auth/register'));
+const NotFound = lazy(() => import('@/pages/not-found'));
 
-const AppRoutes = () => {
+const AppWithRoutes = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
@@ -27,4 +27,4 @@ const AppRoutes = () => {
   );
 };
 
-export default AppRoutes;
+export default AppWithRoutes;

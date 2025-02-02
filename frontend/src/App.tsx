@@ -1,7 +1,15 @@
-import AppRoutes from './routes/AppRoutes';
+import AppWithRoutes from './routes/app-with-routes';
+import { BrowserRouter } from 'react-router-dom';
+import ReactQueryProvider from './providers/react-query-provider';
 
 const App = () => {
-  return <AppRoutes />;
+  return (
+    <BrowserRouter>
+      <ReactQueryProvider>
+        <AppWithRoutes />
+      </ReactQueryProvider>
+    </BrowserRouter>
+  );
 };
 
 export default App;

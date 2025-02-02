@@ -1,6 +1,6 @@
 import { ENV } from './env';
 
-export const corstOptions = {
+export const corsOptions = {
     origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
         if (ENV.NODE_ENV === 'development' || ENV.NODE_ENV === 'test') {
             return callback(null, true);

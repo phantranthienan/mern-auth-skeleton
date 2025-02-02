@@ -10,10 +10,14 @@ import cors from 'cors';
 
 import { connectDB, disconnectDB, checkDBConnection } from '@/config/db';
 import { rateLimiter } from '@/config/rate-limiter';
-import { corstOptions } from '@/config/cors';
+import { corsOptions } from '@/config/cors';
+import { setupSwagger } from '@/config/swagger';
 
 import { notFoundHandler } from './middlewares/notfound.middleware';
 import { errorHandler } from './middlewares/error.middleware';
+import appRouter from '@/routes';
+import { set } from 'mongoose';
+
 
 const app = express();
 
@@ -29,7 +33,7 @@ process.on('SIGINT', async () => {
 
 //middlewares
 app.use(helmet()); // Set security headers
-app.use(cors(corstOptions)); // Enable CORS
+app.use(cors(corsOptions)); // Enable CORS
 app.use(json()); // Parse JSON bodies
 app.use(urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookie headers
@@ -38,12 +42,19 @@ app.use(morgan('dev')); // Log HTTP requests
 app.use(rateLimiter); // Rate limiting
 
 // Routes
+setupSwagger(app);
+app.use('/api', appRouter)
 app.use('/health', async (_, res) => {
     const isDBConnected = await checkDBConnection();
-    res.status(200).json({
-        status: 'OK👌',
-        db: isDBConnected ? 'connected' : 'disconnected',
-    })
+    if (!isDBConnected) {
+        res.status(503).json({
+            message: 'Service unavailable',
+        })
+    } else {
+        res.json({
+            message: 'OK👌',
+        });
+    }
 });
 
 // Error handler

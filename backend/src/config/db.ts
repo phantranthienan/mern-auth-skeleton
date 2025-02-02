@@ -4,9 +4,9 @@ import { ENV } from "./env";
 export const connectDB = async (): Promise<void> => {
     try {
         await mongoose.connect(ENV.MONGO_URI as string);
-        console.log("connected to MongoDB");
+        console.log(`✅ Connected to MongoDB in ${ENV.NODE_ENV} mode`);
     } catch (error) {  
-        console.error("Error connecting to MongoDB: ", error);
+        console.error('❌ MongoDB Connection Failed:', error);
         process.exit(1);
     }
 };
