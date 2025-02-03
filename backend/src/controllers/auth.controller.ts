@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { loginUser, refreshAccessToken, registerUser } from '@/services/auth.service';
+import { loginUser, refreshAccessToken, registerUser, verifyUserOtp } from '@/services/auth.service';
 import { successResponse } from '@/utils/response.util';
 
 import { refreshTokenCookieOptions } from '@/config/cookies';
 import { MESSAGES } from '@/constants/messages';
-import { ApiResponse } from '@/types/responses/response.types';
-import { RegisterRequestBody, LoginRequestBody } from '@/types/requests/auth.requests';
+import { ApiResponse } from '@/types/responses/response.type';
+import { RegisterRequestBody, LoginRequestBody, VerifyUserRequestBody } from '@/types/requests/auth.requests';
 import { RegisterResponseData, LoginResponseData, RefreshTokenResponseData } from '@/types/responses/auth.responses';
 
 export const registerController = async (
@@ -24,6 +24,18 @@ export const registerController = async (
     );
 
     res.status(201).json(response);
+};
+
+export const verifyUserController = async (
+    req: Request<{},{},VerifyUserRequestBody>,
+    res: Response<ApiResponse<null>>
+) => {
+    const { email, otp } = req.body;
+    await verifyUserOtp(email, otp);
+
+    const response = successResponse<null>(MESSAGES.USER_VERIFIED, null);
+    
+    res.status(200).json(response);
 };
 
 export const loginController = async (
@@ -45,10 +57,10 @@ export const loginController = async (
 
 
 export const logoutController = async (
-    req: Request,
+    _req: Request,
     res: Response<ApiResponse<null>>
 ) => {
-    res.clearCookie('refreshToken', refreshTokenCookieOptions);
+    res.clearCookie('refreshToken');
 
     const response = successResponse<null>(MESSAGES.USER_LOGGED_OUT, null);
     res.status(200).json(response);

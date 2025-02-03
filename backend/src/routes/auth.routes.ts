@@ -13,6 +13,16 @@ router.post('/logout', logoutController);
 
 router.post('/refresh-token', refreshTokenController);
 
+router.post('/verify-email', (req, res) => {
+    // TODO: Implement email verification
+    res.send('Email verification route');
+});
+
+router.post('/forgot-password', (req, res) => {
+    // TODO: Implement forgot password
+    res.send('Forgot password route');
+});
+
 /**
  * @swagger
  * /auth/register:
@@ -42,7 +52,7 @@ router.post('/refresh-token', refreshTokenController);
  *                 example: "password123"
  *     responses:
  *       201:
- *         description: User registered successfully.
+ *         description: User registered successfully, a verification code will be sent to provided email.
  *         content:
  *           application/json:
  *             schema:
@@ -53,7 +63,7 @@ router.post('/refresh-token', refreshTokenController);
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: "User registered successfully"
+ *                   example: "User registered successfully, a verification code has been sent to your email"
  *                 data:
  *                   type: object
  *                   properties:
@@ -92,6 +102,51 @@ router.post('/refresh-token', refreshTokenController);
  *                         example: "Invalid email address"
  *       409:
  *         description: Email already registered.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /auth/verify:
+ *   post:
+ *     summary: Verify user email
+ *     description: Verifies a user's email by checking the 6-digit OTP provided in the request body. The OTP expires in 24 hours.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               otp:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: Email verified successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User verified successfully"
+ *       400:
+ *         description: Invalid or expired verification code or user already verified.
+ *       404:
+ *         description: User not found.
  *       500:
  *         description: Internal server error.
  */
@@ -142,7 +197,7 @@ router.post('/refresh-token', refreshTokenController);
  *       400:
  *         description: Validation error.
  *       401:
- *         description: Wrong password.
+ *         description: Wrong password or user not verified.
  *       404:
  *         description: User not found.
  *       500:

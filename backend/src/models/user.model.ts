@@ -21,21 +21,21 @@ const userSchema = new Schema({
     },
     isVerified: {
         type: Boolean,
-        default: true,
+        default: false,
     },
+    verificationCode: String,
+    verificationCodeExpiresAt: Date,
     // resetPasswordToken: String,
     // resetPasswordExpiresAt: Date,
-    // verificationToken: String,
-    // verificationTokenExpiresAt: Date,
 });
 
 const transformFunction = (_: any, ret: any) => {
     delete ret.__v;
     delete ret.password;
+    delete ret.verificationCode;
+    delete ret.verificationCodeExpiresAt;
     // delete ret.resetPasswordToken;
     // delete ret.resetPasswordExpiresAt;
-    // delete ret.verificationToken;
-    // delete ret.verificationTokenExpiresAt;
 };
   
 userSchema.set('toObject', { transform: transformFunction });

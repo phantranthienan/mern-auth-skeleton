@@ -7,12 +7,11 @@ export class ApiError extends Error {
     }
 }
 
-export class NotFoundError extends ApiError {
-    constructor(message = 'Ressource not found') {
-        super(404, message);
+export class BadRequestError extends ApiError {
+    constructor(message = 'Bad request') {
+      super(400, message);
     }
-}
-
+  }
 export class UnauthorizedError extends ApiError {
     constructor(message = 'Unauthorized access') {
         super(401, message);
@@ -24,6 +23,12 @@ export class ForbiddenError extends ApiError {
         super(403, message);
     }
 }
+export class NotFoundError extends ApiError {
+    constructor(message = 'Ressource not found') {
+        super(404, message);
+    }
+}
+
 
 export class ConflictError extends ApiError {
     constructor(message = 'Resource conflict') {

@@ -9,8 +9,12 @@ export const ENV = {
     PORT: process.env.PORT || 3000,
     MONGO_URI: process.env.MONGO_URI,
     CORS_ORIGIN: (process.env.CORS_ORIGIN || '').split(','),
+    //jwt
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
+    //nodemailer
+    GMAIL_USER: process.env.GMAIL_USER,
+    GMAIL_PASS: process.env.GMAIL_PASS,
 }
 
 const requiredVariables = ['MONGO_URI', 'ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET'];

@@ -1,5 +1,4 @@
-// src/utils/response.util.ts
-import { ApiResponse } from '@/types/responses/response.types';
+import { ApiResponse } from '@/types/responses/response.type';
 
 /**
  * Creates a success API response object
