@@ -25,8 +25,8 @@ const userSchema = new Schema({
     },
     verificationCode: String,
     verificationCodeExpiresAt: Date,
-    // resetPasswordToken: String,
-    // resetPasswordExpiresAt: Date,
+    resetPasswordToken: String,
+    resetPasswordTokenExpiresAt: Date,
 });
 
 const transformFunction = (_: any, ret: any) => {
@@ -34,8 +34,8 @@ const transformFunction = (_: any, ret: any) => {
     delete ret.password;
     delete ret.verificationCode;
     delete ret.verificationCodeExpiresAt;
-    // delete ret.resetPasswordToken;
-    // delete ret.resetPasswordExpiresAt;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordTokenExpiresAt;
 };
   
 userSchema.set('toObject', { transform: transformFunction });

@@ -1,22 +1,33 @@
 import { INVALID } from "zod";
 
 export const MESSAGES = {
+    //************ SUCCESS MESSAGES ***************/
     // Auth messages
     USER_REGISTERED: 'User registered successfully, a verification code has been sent to your email',
     USER_LOGGED_IN: 'Login successful',
     USER_LOGGED_OUT: 'Logout successful',
     USER_VERIFIED: 'User verified successfully',
-    EMAIL_ALREADY_REGISTERED: 'Email already registered',
-    USER_ALREADY_VERIFIED: 'User is already verified',
-    USER_NOT_VERIFIED: 'User is not verified',
-    VERIFICATION_CODE_NOT_FOUND: 'Verification code not found',
-    VERIFICATOIN_CODE_EXPIRED: 'Verification code expired',
-    INVALID_VERIFICATION_CODE: 'Invalid verification code',
-    USER_NOT_FOUND: 'User not found',
-    WRONG_PASSWORD: 'Wrong password',
+    RESET_PASSWORD_EMAIL_SENT: 'A password reset link has been sent to your email',
+    RESET_PASSWORD_SUCCESS: 'Password reset successful',
 
     //JWT messages
     NEW_TOKEN_GENERATED: 'New access token generated',
+
+    //************ ERROR MESSAGES ***************/
+    // Auth messages
+    EMAIL_ALREADY_REGISTERED: 'Email already registered',
+    USER_ALREADY_VERIFIED: 'User is already verified',
+    USER_NOT_FOUND: 'User not found',
+    WRONG_PASSWORD: 'Wrong password',
+    USER_NOT_VERIFIED: 'User is not verified',
+    VERIFICATION_CODE_NOT_FOUND: 'Verification code not found',
+    VERIFICATION_CODE_EXPIRED: 'Verification code expired',
+    VERIFICATION_CODE_INVALID: 'Invalid verification code',
+    RESET_PASSWORD_TOKEN_NOT_FOUND: 'Reset password token not found',
+    RESET_PASSWORD_TOKEN_INVALID: 'Invalid reset password token',
+    RESET_PASSWORD_TOKEN_EXPIRED: 'Reset password token expired',
+
+    // JWT messages
     TOKEN_EXPIRED: 'Refresh token expired',
     TOKEN_INVALID: 'Invalid refresh token',
     TOKEN_MISSING: 'Refresh token missing',
@@ -26,4 +37,4 @@ export const MESSAGES = {
 
     // Server messages
     INTERNAL_SERVER_ERROR: 'Internal server error',
-};
+} as const;

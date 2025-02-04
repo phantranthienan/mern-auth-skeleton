@@ -1,11 +1,13 @@
 import express from 'express';
 import { validateRequest } from '@/middlewares/validation.middleware';
-import { registerSchema, loginSchema } from '@/utils/validations/auth.validation';
-import { registerController, loginController, logoutController, refreshTokenController } from '@/controllers/auth.controller';
+import { registerSchema, loginSchema, verifyUserSchema, forgotPasswordSchema, resetPasswordSchema } from '@/utils/validations/auth.validation';
+import { registerController, loginController, logoutController, refreshTokenController, verifyUserController, forgotPasswordController, resetPasswordController } from '@/controllers/auth.controller';
 
 const router = express.Router();
 
 router.post('/register', validateRequest(registerSchema), registerController);
+
+router.post('/verify-user', validateRequest(verifyUserSchema), verifyUserController); 
 
 router.post('/login', validateRequest(loginSchema), loginController);
 
@@ -13,15 +15,9 @@ router.post('/logout', logoutController);
 
 router.post('/refresh-token', refreshTokenController);
 
-router.post('/verify-email', (req, res) => {
-    // TODO: Implement email verification
-    res.send('Email verification route');
-});
+router.post('/forgot-password', validateRequest(forgotPasswordSchema), forgotPasswordController);
 
-router.post('/forgot-password', (req, res) => {
-    // TODO: Implement forgot password
-    res.send('Forgot password route');
-});
+router.post('/reset-password', validateRequest(resetPasswordSchema), resetPasswordController);
 
 /**
  * @swagger
@@ -108,7 +104,7 @@ router.post('/forgot-password', (req, res) => {
 
 /**
  * @swagger
- * /auth/verify:
+ * /auth/verify-user:
  *   post:
  *     summary: Verify user email
  *     description: Verifies a user's email by checking the 6-digit OTP provided in the request body. The OTP expires in 24 hours.
@@ -258,6 +254,76 @@ router.post('/forgot-password', (req, res) => {
  *                       example: "new_jwt_access_token_here"
  *       401:
  *         description: Refresh token missing or invalid or expired.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Initiate password reset
+ *     description: Sends a password reset link to the specified email if it exists.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Password reset link sent.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Internal server error.
+ */
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset user password
+ *     description: Resets the user's password using the reset token sent via email.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - token
+ *               - newPassword
+ *               - confirmNewPassword
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               token:
+ *                 type: string
+ *                 example: "reset_token_here"
+ *               newPassword:
+ *                 type: string
+ *                 example: "newpassword123"
+ *               confirmNewPassword:
+ *                 type: string
+ *                 example: "newpassword123"
+ *     responses:
+ *       200:
+ *         description: Password reset successfully.
+ *       400:
+ *         description: Validation error or token mismatch/expired.
+ *       404:
+ *         description: User not found.
  *       500:
  *         description: Internal server error.
  */

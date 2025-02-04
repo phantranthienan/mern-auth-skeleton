@@ -30,7 +30,7 @@ export const forgotPasswordEmailTemplate = (to: string, resetLink: string) => {
         subject: 'Password Reset Request',
         text: `You have requested to reset your password. Please click the link below to reset your password. If you did not request a password reset, please ignore this email.\n\n${resetLink}`,
         html: `<p>You have requested to reset your password.</p>
-               <p>Please click the link below to reset your password:</p>
+               <p>Please click the link below to reset your password (valid for 1 hour):</p>
                <p><a href="${resetLink}">Reset Password</a></p>
                <p>If you did not request a password reset, please ignore this email.</p>`
     };

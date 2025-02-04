@@ -1,10 +1,11 @@
-import { User } from '../models/user.model';
+import crypto from 'crypto';
+import { User } from '@/models/user.model';
 import { ConflictError, NotFoundError, UnauthorizedError, BadRequestError } from '@/errors/api.errors';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '@/utils/jwt.util';
 import { hashPassword, comparePassword } from '@/utils/bcrypt.util';
-import { sendVerificationOtpEmail } from '@/utils/nodemailer.util';
+import { sendForgotPasswordEmail, sendVerificationOtpEmail } from '@/utils/nodemailer.util';
 import { generateOTP } from '@/utils/otp.util';
 
 import { MESSAGES } from '@/constants/messages';
@@ -13,9 +14,26 @@ export const registerUser = async (email: string, password: string) => {
     // check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        throw new ConflictError(MESSAGES.EMAIL_ALREADY_REGISTERED);
-    }
+        if (existingUser.isVerified) {
+            throw new ConflictError(MESSAGES.EMAIL_ALREADY_REGISTERED);
+        }
+        // If the user exists but is not verified (perhaps OTP expired), update the OTP details.
+        const newOtp = generateOTP();
+        const otpExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        const hashedPassword = await hashPassword(password);
 
+        existingUser.password = hashedPassword;
+        existingUser.verificationCode = newOtp;
+        existingUser.verificationCodeExpiresAt = otpExpiresAt;
+        await existingUser.save();
+        
+        // Resend the verification OTP email
+        await sendVerificationOtpEmail(email, newOtp);
+
+        const userObject = existingUser.toObject();
+
+        return userObject;
+    }
     // set username
     const username = email.split('@')[0];
 
@@ -58,10 +76,10 @@ export const verifyUserOtp = async (email: string, otp: string) => {
         throw new NotFoundError(MESSAGES.VERIFICATION_CODE_NOT_FOUND);
     }
     if (user.verificationCode !== otp) {
-        throw new BadRequestError(MESSAGES.INVALID_VERIFICATION_CODE);
+        throw new BadRequestError(MESSAGES.VERIFICATION_CODE_INVALID);
     }
     if (new Date() > user.verificationCodeExpiresAt) {
-        throw new BadRequestError(MESSAGES.VERIFICATOIN_CODE_EXPIRED);
+        throw new BadRequestError(MESSAGES.VERIFICATION_CODE_EXPIRED);
     }
 
     user.isVerified = true;
@@ -115,4 +133,49 @@ export const refreshAccessToken = async (refreshToken: string) => {
         }
         throw error;
     }
+};
+
+export const forgotPassword = async (email: string) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new NotFoundError(MESSAGES.USER_NOT_FOUND);
+    }
+
+    // Generate a random token (you can also hash it if desired)
+    const resetPasswordToken = crypto.randomBytes(32).toString('hex');
+    // Set expiration time (e.g., 1 hour from now)
+    const resetPasswordTokenExpiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000);
+
+    // Update the user document
+    user.resetPasswordToken = resetPasswordToken;
+    user.resetPasswordTokenExpiresAt = resetPasswordTokenExpiresAt;
+    await user.save();
+
+    // Create a reset link (include email for convenience)
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetPasswordToken}&email=${email}`;
+    await sendForgotPasswordEmail(email, resetLink);
+};
+
+export const resetPassword = async (email: string, token: string, newPassword: string) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new NotFoundError(MESSAGES.USER_NOT_FOUND);
+    }
+
+    if (!user.resetPasswordToken || !user.resetPasswordTokenExpiresAt) {
+        throw new BadRequestError(MESSAGES.RESET_PASSWORD_TOKEN_NOT_FOUND);
+    }
+    if (new Date() > user.resetPasswordTokenExpiresAt) {
+        throw new BadRequestError(MESSAGES.RESET_PASSWORD_TOKEN_EXPIRED);
+    }
+    if (user.resetPasswordToken !== token) {
+        throw new BadRequestError(MESSAGES.RESET_PASSWORD_TOKEN_INVALID);
+    }
+
+    // Token is valid; update the password
+    user.password = await hashPassword(newPassword);
+    // Clear reset token fields
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExpiresAt = undefined;
+    await user.save();
 };

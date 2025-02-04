@@ -19,13 +19,17 @@ export const errorHandler = (
                 message: error.message,
             };
         });
-        res.status(400).json(errorResponse(MESSAGES.VALIDATION_ERROR, errors));
+
+        const response = errorResponse(MESSAGES.VALIDATION_ERROR, errors);
+        res.status(400).json(response);
     }
 
     if (err instanceof ApiError) {
-        res.status(err.statusCode).json(errorResponse(err.message));
+        const response = errorResponse(err.message);
+        res.status(err.statusCode).json(response);
     }
 
     console.error('❌ Unexpected Error:', err);
-    res.status(500).json(errorResponse(MESSAGES.INTERNAL_SERVER_ERROR));
+    const response = errorResponse(MESSAGES.INTERNAL_SERVER_ERROR);
+    res.status(500).json(response);
 };

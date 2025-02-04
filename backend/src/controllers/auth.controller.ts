@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { loginUser, refreshAccessToken, registerUser, verifyUserOtp } from '@/services/auth.service';
+import { loginUser, refreshAccessToken, registerUser, verifyUserOtp, forgotPassword, resetPassword } from '@/services/auth.service';
 import { successResponse } from '@/utils/response.util';
 
 import { refreshTokenCookieOptions } from '@/config/cookies';
 import { MESSAGES } from '@/constants/messages';
 import { ApiResponse } from '@/types/responses/response.type';
-import { RegisterRequestBody, LoginRequestBody, VerifyUserRequestBody } from '@/types/requests/auth.requests';
+import { RegisterRequestBody, LoginRequestBody, VerifyUserRequestBody, ForgotPasswordRequestBody, ResetPasswordRequestBody } from '@/types/requests/auth.requests';
 import { RegisterResponseData, LoginResponseData, RefreshTokenResponseData } from '@/types/responses/auth.responses';
 
 export const registerController = async (
@@ -78,5 +78,27 @@ export const refreshTokenController = async (
         { accessToken: newAccessToken }
     );
     
+    res.status(200).json(response);
+};
+
+export const forgotPasswordController = async (
+    req: Request<{},{}, ForgotPasswordRequestBody>,
+    res: Response<ApiResponse<null>>
+) => {
+    const { email } = req.body;
+    await forgotPassword(email);
+
+    const response = successResponse<null>(MESSAGES.RESET_PASSWORD_EMAIL_SENT, null);
+    res.status(200).json(response);
+};
+
+export const resetPasswordController = async (
+    req: Request<{},{},ResetPasswordRequestBody>,
+    res: Response<ApiResponse<null>>
+) => {
+    const { email, token, newPassword } = req.body;
+    await resetPassword(email, token, newPassword);
+    
+    const response = successResponse<null>(MESSAGES.RESET_PASSWORD_SUCCESS, null);
     res.status(200).json(response);
 };
