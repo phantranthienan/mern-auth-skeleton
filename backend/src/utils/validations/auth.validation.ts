@@ -22,7 +22,7 @@ export const loginSchema = z.object({
         .min(8, { message: 'Password must be at least 8 characters long'})
 })
 
-export const verifyUserSchema = z.object({
+export const verifyAccountSchema = z.object({
     email: z.string()
         .email({ message: 'Invalid email address'}),
     otp: z.string()

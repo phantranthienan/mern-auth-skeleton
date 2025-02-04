@@ -1,13 +1,13 @@
 import express from 'express';
 import { validateRequest } from '@/middlewares/validation.middleware';
-import { registerSchema, loginSchema, verifyUserSchema, forgotPasswordSchema, resetPasswordSchema } from '@/utils/validations/auth.validation';
-import { registerController, loginController, logoutController, refreshTokenController, verifyUserController, forgotPasswordController, resetPasswordController } from '@/controllers/auth.controller';
+import { registerSchema, loginSchema, verifyAccountSchema, forgotPasswordSchema, resetPasswordSchema } from '@/utils/validations/auth.validation';
+import { registerController, loginController, logoutController, refreshTokenController, verifyAccountController, forgotPasswordController, resetPasswordController } from '@/controllers/auth.controller';
 
 const router = express.Router();
 
 router.post('/register', validateRequest(registerSchema), registerController);
 
-router.post('/verify-user', validateRequest(verifyUserSchema), verifyUserController); 
+router.post('/verify-account', validateRequest(verifyAccountSchema), verifyAccountController); 
 
 router.post('/login', validateRequest(loginSchema), loginController);
 
@@ -104,7 +104,7 @@ router.post('/reset-password', validateRequest(resetPasswordSchema), resetPasswo
 
 /**
  * @swagger
- * /auth/verify-user:
+ * /auth/verify-account:
  *   post:
  *     summary: Verify user email
  *     description: Verifies a user's email by checking the 6-digit OTP provided in the request body. The OTP expires in 24 hours.

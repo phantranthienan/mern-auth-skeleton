@@ -5,7 +5,7 @@ import { successResponse } from '@/utils/response.util';
 import { refreshTokenCookieOptions } from '@/config/cookies';
 import { MESSAGES } from '@/constants/messages';
 import { ApiResponse } from '@/types/responses/response.type';
-import { RegisterRequestBody, LoginRequestBody, VerifyUserRequestBody, ForgotPasswordRequestBody, ResetPasswordRequestBody } from '@/types/requests/auth.requests';
+import { RegisterRequestBody, LoginRequestBody, VerifyAccountRequestBody, ForgotPasswordRequestBody, ResetPasswordRequestBody } from '@/types/requests/auth.requests';
 import { RegisterResponseData, LoginResponseData, RefreshTokenResponseData } from '@/types/responses/auth.responses';
 
 export const registerController = async (
@@ -26,8 +26,8 @@ export const registerController = async (
     res.status(201).json(response);
 };
 
-export const verifyUserController = async (
-    req: Request<{},{},VerifyUserRequestBody>,
+export const verifyAccountController = async (
+    req: Request<{},{},VerifyAccountRequestBody>,
     res: Response<ApiResponse<null>>
 ) => {
     const { email, otp } = req.body;

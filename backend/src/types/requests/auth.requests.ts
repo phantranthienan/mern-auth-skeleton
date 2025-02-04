@@ -6,7 +6,7 @@ export interface RegisterRequestBody {
     confirmPassword: string;
 }
 
-export interface VerifyUserRequestBody {
+export interface VerifyAccountRequestBody {
     email: string;
     otp: string;
 }
