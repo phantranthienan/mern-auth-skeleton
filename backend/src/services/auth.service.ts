@@ -9,6 +9,7 @@ import { sendForgotPasswordEmail, sendVerificationOtpEmail } from '@/utils/nodem
 import { generateOTP } from '@/utils/otp.util';
 
 import { MESSAGES } from '@/constants/messages';
+import { ENV } from '@/config/env';
 
 export const registerUser = async (email: string, password: string) => {
     // check if user already exists
@@ -152,7 +153,7 @@ export const forgotPassword = async (email: string) => {
     await user.save();
 
     // Create a reset link (include email for convenience)
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetPasswordToken}&email=${email}`;
+    const resetLink = `${ENV.FRONTEND_URL}/reset-password?token=${resetPasswordToken}&email=${email}`;
     await sendForgotPasswordEmail(email, resetLink);
 };
 

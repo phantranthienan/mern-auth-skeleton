@@ -55,7 +55,6 @@ export const loginController = async (
     res.status(200).json(response);
 };
 
-
 export const logoutController = async (
     _req: Request,
     res: Response<ApiResponse<null>>
