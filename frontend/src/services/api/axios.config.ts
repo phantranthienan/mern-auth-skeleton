@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { tokenManager } from '../../utils/token-manager';
+import { getAccessToken } from '@/utils/token.utils';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -12,9 +12,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = tokenManager.getAccessToken();
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    const token = getAccessToken();
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
@@ -22,3 +22,5 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export default axiosInstance;

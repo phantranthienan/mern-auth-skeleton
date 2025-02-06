@@ -1,27 +1,33 @@
+/* eslint-disable prettier/prettier */
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Loading from '@/components/ui/loading';
-import AuthLayout from '@/layouts/auth-layout';
+import AuthLayout from '@/layouts/auth.layout';
 
-const Home = lazy(() => import('@/pages/home'));
-const Login = lazy(() => import('@/pages/auth/login'));
-const Register = lazy(() => import('@/pages/auth/register'));
-const NotFound = lazy(() => import('@/pages/not-found'));
+const HomePage = lazy(() => import('@/pages/home.page'));
+const LoginPage = lazy(() => import('@/pages/auth/login.page'));
+const RegisterPage = lazy(() => import('@/pages/auth/register.page'));
+const VerifyAccountPage = lazy(() => import('@/pages/auth/verify-account.page'));
+const ForgotPasswordPage = lazy(() => import('@/pages/auth/forgot-password.page'));
+const ResetPasswordPage = lazy(() => import('@/pages/auth/reset-password.page'));
+const NotFoundPage = lazy(() => import('@/pages/not-found.page'));
 
 const AppWithRoutes = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path="/" element={<Home />} />
-
+        <Route path="/" element={<HomePage />} />
         {/* Auth routes */}
         <Route path="/auth" element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="verify-account" element={<VerifyAccountPage />} />
+          <Route path="request-reset-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
         </Route>
 
         {/* 404 */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );
