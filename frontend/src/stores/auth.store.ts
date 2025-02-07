@@ -1,31 +1,46 @@
 import { create } from 'zustand';
-import { UserInterface } from '@/types/common/user.types';
 import * as authApi from '@/services/api/auth.api';
+import { clearAccessToken } from '@/utils/token.utils';
 
+import { UserInterface } from '@/types/common/user.types';
 type AuthStates = {
   user: UserInterface | null;
-  isCheckingAuth: boolean;
   isAuthenticated: boolean;
+  isCheckingAuth: boolean;
 };
 
 type AuthActions = {
-  checkAuth: () => void;
+  checkAuth: () => Promise<void>;
+  authenticate: (userData: UserInterface) => Promise<void>;
+  unAuthenticate: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthStates & AuthActions>((set) => ({
+export const useAuthStore = create<AuthStates & AuthActions>((set, get) => ({
   user: null,
-  isCheckingAuth: true,
   isAuthenticated: false,
+  isCheckingAuth: true,
 
   checkAuth: async () => {
     try {
       const response = await authApi.checkAuth();
-      set({ user: response.data, isAuthenticated: true });
+      const userData = response.data?.user;
+      if (userData) {
+        get().authenticate(userData);
+      }
     } catch (error) {
-      set({ user: null, isAuthenticated: false });
+      get().unAuthenticate();
       throw error;
     } finally {
       set({ isCheckingAuth: false });
     }
+  },
+
+  authenticate: async (userData) => {
+    set({ user: userData, isAuthenticated: true });
+  },
+
+  unAuthenticate: async () => {
+    clearAccessToken();
+    set({ user: null, isAuthenticated: false });
   },
 }));

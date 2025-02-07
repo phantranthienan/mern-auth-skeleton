@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Loading from '@/components/ui/loading';
 import AuthLayout from '@/layouts/auth.layout';
+import ProtectedRoute from './protected-route';
 import { LINKS } from '@/constants/links';
 
 const HomePage = lazy(() => import('@/pages/home.page'));
@@ -17,7 +18,9 @@ const AppWithRoutes = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path={LINKS.HOME} element={<HomePage />} />
+        <Route path={LINKS.HOME} element={<ProtectedRoute />}>
+          <Route index element={<HomePage />} />
+        </Route>
         {/* Auth routes */}
         <Route path={LINKS.AUTH} element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />

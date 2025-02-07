@@ -1,15 +1,22 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import useNotification from '@/hooks/use-notification';
 
+import * as authApi from '@/services/api/auth.api';
 import { registerSchema, RegisterInput } from '@/utils/validations/auth.schema';
 
 import { Mail, LockKeyhole, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 import { LINKS } from '@/constants/links';
+import { ERROR_CONTEXTS } from '@/constants/error-contexts';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { handleSuccess, handleError } = useNotification();
 
   const {
     register,
@@ -22,7 +29,14 @@ const RegisterPage = () => {
 
   const onSubmit = async (data: RegisterInput) => {
     console.log('Form data:', data);
-    // TODO: Call your registration API here with the form data.
+    try {
+      const response = await authApi.register(data);
+      console.log('Registration response:', response);
+      handleSuccess(response.message);
+      navigate(LINKS.VERIFY_ACCOUNT);
+    } catch (error) {
+      handleError(error, ERROR_CONTEXTS.REGISTER);
+    }
   };
 
   return (

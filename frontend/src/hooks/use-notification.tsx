@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { AxiosError } from 'axios';
 import { useNotificationStore } from '@/stores/notification.store';
 
-export const useNotification = () => {
+const useNotification = () => {
   const { show } = useNotificationStore();
 
   const handleSuccess = useCallback(
