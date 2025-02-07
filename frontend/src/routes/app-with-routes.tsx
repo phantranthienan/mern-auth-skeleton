@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Loading from '@/components/ui/loading';
 import AuthLayout from '@/layouts/auth.layout';
+import { LINKS } from '@/constants/links';
 
 const HomePage = lazy(() => import('@/pages/home.page'));
 const LoginPage = lazy(() => import('@/pages/auth/login.page'));
@@ -16,18 +17,18 @@ const AppWithRoutes = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path={LINKS.HOME} element={<HomePage />} />
         {/* Auth routes */}
-        <Route path="/auth" element={<AuthLayout />}>
+        <Route path={LINKS.AUTH} element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="verify-account" element={<VerifyAccountPage />} />
-          <Route path="request-reset-password" element={<ForgotPasswordPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
         </Route>
 
         {/* 404 */}
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path={LINKS.NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );

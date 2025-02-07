@@ -4,28 +4,31 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { registerSchema, RegisterInput } from '@/utils/validations/auth.schema';
 
-import { Mail, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { Mail, LockKeyhole, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { LINKS } from '@/constants/links';
 
 const RegisterPage = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
-    formState: { errors },
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
+    mode: 'onTouched',
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  const onSubmit = (data: RegisterInput) => {
+  const onSubmit = async (data: RegisterInput) => {
     console.log('Form data:', data);
     // TODO: Call your registration API here with the form data.
   };
+
   return (
     <div>
       {/* Header for register form */}
-      <header className="mb-8 text-center">
+      <header className="text-center sm:mb-8">
         <h1 className="text-2xl font-bold">Create Account</h1>
         <p className="text-base-content/60">
           Get started with your free account
@@ -33,26 +36,30 @@ const RegisterPage = () => {
       </header>
 
       {/* Register form */}
-      <form onSubmit={() => {}} className="space-y-4">
-        <div className="form-control">
-          <label className="label">
-            <span className="label font-medium">Email</span>
-          </label>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:my-4">
+        <div className="fieldset w-xs sm:w-sm">
+          <span className="fieldset-label text-base font-medium">Email</span>
           <div className="input input-bordered w-full">
             <Mail className="text-base-content/40 pointer-events-none" />
-            <input type="text" placeholder="you@example.com" />
+            <input
+              type="text"
+              placeholder="you@example.com"
+              {...register('email')}
+            />
           </div>
+          {errors.email && (
+            <span className="text-error text-sm">{errors.email.message}</span>
+          )}
         </div>
 
-        <div className="form-control">
-          <label className="label">
-            <span className="label font-medium">Password</span>
-          </label>
+        <div className="fieldset w-xs sm:w-sm">
+          <span className="fieldset-label text-base font-medium">Password</span>
           <div className="input input-bordered w-full">
-            <KeyRound className="text-base-content/40 pointer-events-none" />
+            <LockKeyhole className="text-base-content/40 pointer-events-none" />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="•••••••••••••••••••••"
+              {...register('password')}
             />
             <button
               type="button"
@@ -66,35 +73,50 @@ const RegisterPage = () => {
               )}
             </button>
           </div>
+          {errors.password && (
+            <span className="text-error text-sm">
+              {errors.password.message}
+            </span>
+          )}
         </div>
 
-        <div className="form-control">
-          <label className="label">
-            <span className="label font-medium">Confirm Password</span>
-          </label>
+        <div className="fieldset w-xs sm:w-sm">
+          <span className="fieldset-label text-base font-medium">
+            Confirm Password
+          </span>
           <div className="input input-bordered w-full">
-            <KeyRound className="text-base-content/40 pointer-events-none" />
+            <LockKeyhole className="text-base-content/40 pointer-events-none" />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="•••••••••••••••••••••"
+              {...register('confirmPassword')}
             />
           </div>
+          {errors.confirmPassword && (
+            <span className="text-error text-sm">
+              {errors.confirmPassword.message}
+            </span>
+          )}
         </div>
 
         <button
           type="submit"
           className="btn btn-primary w-full"
-          disabled={false}
+          disabled={isSubmitting || !isValid}
         >
-          Create Account
+          {isSubmitting ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            'Create Account'
+          )}
         </button>
       </form>
 
       {/* Footer for register form */}
-      <footer className="mt-8 text-center">
+      <footer className="text-center">
         <p className="text-base-content/60">
           Already have an account?{' '}
-          <Link to="/auth/login" className="link link-primary">
+          <Link to={LINKS.LOGIN} className="link link-primary">
             Login
           </Link>
         </p>

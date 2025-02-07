@@ -1,42 +1,63 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Mail, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { loginSchema, LoginInput } from '@/utils/validations/auth.schema';
+
+import { Mail, Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+import { LINKS } from '@/constants/links';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const {
+    register,
+    formState: { errors, isSubmitting, isValid },
+    handleSubmit,
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onTouched',
+  });
+
+  const onSubmit = async (data: LoginInput) => {
+    console.log('Form data:', data);
+  };
+
   return (
     <div>
-      {/* Header for register form */}
       <header className="mb-8 text-center">
-        <h1 className="text-2xl font-bold">Create Account</h1>
+        <h1 className="text-2xl font-bold">Welcome Back!</h1>
         <p className="text-base-content/60">
-          Get started with your free account
+          Log in to your account to continue
         </p>
       </header>
 
-      {/* Register form */}
-      <form onSubmit={() => {}} className="space-y-4">
-        <div className="form-control">
-          <label className="label">
-            <span className="label font-medium">Email</span>
-          </label>
-          <div className="input input-bordered">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+        <div className="fieldset w-xs sm:w-sm">
+          <span className="fieldset-label text-base font-medium">Email</span>
+          <div className="input input-bordered w-full">
             <Mail className="text-base-content/40 pointer-events-none" />
-            <input type="text" placeholder="you@example.com" />
+            <input
+              type="text"
+              placeholder="you@example.com"
+              {...register('email')}
+            />
           </div>
+          {errors.email && (
+            <span className="text-error text-sm">{errors.email.message}</span>
+          )}
         </div>
 
-        <div className="form-control">
-          <label className="label">
-            <span className="label font-medium">Password</span>
-          </label>
-          <div className="input input-bordered">
-            <KeyRound className="text-base-content/40 pointer-events-none" />
+        <div className="fieldset w-xs sm:w-sm">
+          <span className="fieldset-label text-base font-medium">Password</span>
+          <div className="input input-bordered w-full">
+            <LockKeyhole className="text-base-content/40 pointer-events-none" />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="•••••••••••••••••••••"
+              {...register('password')}
             />
             <button
               type="button"
@@ -50,23 +71,37 @@ const LoginPage = () => {
               )}
             </button>
           </div>
+          {errors.password && (
+            <span className="text-error text-sm">
+              {errors.password.message}
+            </span>
+          )}
+          <span className="fieldset-label ml-auto text-sm">
+            Forgot your password?{' '}
+            <Link className="link link-primary" to={LINKS.FORGOT_PASSWORD}>
+              Click here
+            </Link>
+          </span>
         </div>
 
         <button
           type="submit"
           className="btn btn-primary w-full"
-          disabled={false}
+          disabled={!isValid || isSubmitting}
         >
-          Create Account
+          {isSubmitting ? (
+            <span className="loading loading-spinner" />
+          ) : (
+            'Log In'
+          )}
         </button>
       </form>
 
-      {/* Footer for register form */}
       <footer className="mt-8 text-center">
         <p className="text-base-content/60">
-          Already have an account?{' '}
-          <Link to="/auth/login" className="link link-primary">
-            Login
+          Don't have account yet?{' '}
+          <Link to={LINKS.REGISTER} className="link link-primary">
+            Register here
           </Link>
         </p>
       </footer>
