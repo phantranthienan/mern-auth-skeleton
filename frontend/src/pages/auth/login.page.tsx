@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
+
 import useNotification from '@/hooks/use-notification';
 import { useAuthStore } from '@/stores/auth.store';
+
 import * as authApi from '@/services/api/auth.api';
 
 import { loginSchema, LoginInput } from '@/utils/validations/auth.schema';
+import { setAccessToken } from '@/utils/token.utils';
 
 import { Mail, Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -15,6 +19,7 @@ import { ERROR_CONTEXTS } from '@/constants/error-contexts';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const { authenticate } = useAuthStore();
   const { handleSuccess, handleError } = useNotification();
 
@@ -28,14 +33,16 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data: LoginInput) => {
-    console.log('Form data:', data);
     try {
       const response = await authApi.login(data);
-      console.log('Login response:', response);
+      if (response.data?.accessToken) {
+        setAccessToken(response.data.accessToken);
+      }
       if (response.data?.user) {
         authenticate(response.data.user);
       }
       handleSuccess(response.message);
+      navigate('/');
     } catch (error) {
       handleError(error, ERROR_CONTEXTS.LOGIN);
     }

@@ -3,7 +3,7 @@ import { User } from '@/models/user.model';
 import { ConflictError, NotFoundError, UnauthorizedError, BadRequestError } from '@/errors/api.errors';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '@/utils/jwt.util';
+import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from '@/utils/jwt.util';
 import { hashPassword, comparePassword } from '@/utils/bcrypt.util';
 import { sendForgotPasswordEmail, sendVerificationOtpEmail } from '@/utils/nodemailer.util';
 import { generateOTP } from '@/utils/otp.util';
@@ -111,12 +111,12 @@ export const loginUser = async (email: string, password: string) => {
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, userObject };
 };
 
 export const refreshAccessToken = async (refreshToken: string) => {
     if (!refreshToken) {
-        throw new UnauthorizedError(MESSAGES.TOKEN_MISSING);
+        throw new UnauthorizedError(MESSAGES.REFRESH_TOKEN_MISSING);
     }
 
     try {
@@ -126,10 +126,10 @@ export const refreshAccessToken = async (refreshToken: string) => {
     } catch (error: unknown) {
         if (error instanceof JsonWebTokenError) {
             if (error.name === 'TokenExpiredError') {
-                throw new UnauthorizedError(MESSAGES.TOKEN_EXPIRED);
+                throw new UnauthorizedError(MESSAGES.REFRESH_TOKEN_EXPIRED);
             }
             if (error.name === 'JsonWebTokenError') {
-                throw new UnauthorizedError(MESSAGES.TOKEN_INVALID);
+                throw new UnauthorizedError(MESSAGES.REFRESH_TOKEN_INVALID);
             }
         }
         throw error;
@@ -153,7 +153,7 @@ export const forgotPassword = async (email: string) => {
     await user.save();
 
     // Create a reset link (include email for convenience)
-    const resetLink = `${ENV.FRONTEND_URL}/reset-password?token=${resetPasswordToken}&email=${email}`;
+    const resetLink = `${ENV.FRONTEND_URL}/auth/reset-password?token=${resetPasswordToken}&email=${email}`;
     await sendForgotPasswordEmail(email, resetLink);
 };
 
@@ -180,3 +180,31 @@ export const resetPassword = async (email: string, token: string, newPassword: s
     user.resetPasswordTokenExpiresAt = undefined;
     await user.save();
 };
+
+export const decodeAccessToken = async (accessToken: string) => {
+    try {
+        const decodedToken = verifyAccessToken(accessToken);
+        if (!decodedToken) {
+            throw new UnauthorizedError(MESSAGES.ACCESS_TOKEN_INVALID);
+        }
+
+        const { userId } = decodedToken;
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new NotFoundError(MESSAGES.USER_NOT_FOUND);
+        }
+
+        const userObject = user.toObject();
+        return userObject;
+    } catch (error: unknown) {
+        if (error instanceof JsonWebTokenError) {
+            if (error.name === 'TokenExpiredError') {
+                throw new UnauthorizedError(MESSAGES.ACCESS_TOKEN_EXPIRED);
+            }
+            if (error.name === 'JsonWebTokenError') {
+                throw new UnauthorizedError(MESSAGES.ACCESS_TOKEN_INVALID);
+            }
+        }
+        throw error;
+    }
+}

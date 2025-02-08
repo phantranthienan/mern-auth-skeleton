@@ -28,12 +28,10 @@ const RegisterPage = () => {
   });
 
   const onSubmit = async (data: RegisterInput) => {
-    console.log('Form data:', data);
     try {
       const response = await authApi.register(data);
-      console.log('Registration response:', response);
       handleSuccess(response.message);
-      navigate(LINKS.VERIFY_ACCOUNT);
+      navigate(`${LINKS.VERIFY_ACCOUNT}?email=${data.email}`);
     } catch (error) {
       handleError(error, ERROR_CONTEXTS.REGISTER);
     }

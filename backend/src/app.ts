@@ -9,9 +9,9 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 import { connectDB, disconnectDB, checkDBConnection } from '@/config/db';
-import { rateLimiter } from '@/config/rate-limiter';
+import { rateLimiter } from '@/config/rate-limiter.config';
 import { corsOptions } from '@/config/cors';
-import { setupSwagger } from '@/config/swagger';
+import { setupSwagger } from '@/config/swagger.config';
 import { ENV } from '@/config/env';
 
 import { notFoundHandler } from './middlewares/notfound.middleware';

@@ -8,12 +8,14 @@ const Notification: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="toast toast-top toast-center">
-      <div className={`alert alert-${type} alert-vertical sm:alert-horizontal`}>
-        {type === 'info' && <Info size={24} />}
-        {type === 'success' && <CircleCheck size={24} />}
-        {type === 'warning' && <AlertTriangle size={24} />}
-        {type === 'error' && <XCircle size={24} />}
+    <div className="toast toast-top toast-center mx-0 max-w-sm">
+      <div
+        className={`alert alert-${type} alert-vertical sm:alert-horizontal m-auto gap-0.5 sm:gap-3`}
+      >
+        {type === 'info' && <Info size={20} />}
+        {type === 'success' && <CircleCheck size={20} />}
+        {type === 'warning' && <AlertTriangle size={20} />}
+        {type === 'error' && <XCircle size={20} />}
         <span>{message}</span>
       </div>
     </div>

@@ -1,14 +1,14 @@
-import { INVALID } from "zod";
-
 export const MESSAGES = {
     //************ SUCCESS MESSAGES ***************/
     // Auth messages
-    USER_REGISTERED: 'User registered successfully, a verification code has been sent to your email',
+    USER_REGISTERED: 'User registered successfully, please verify your email',
     USER_LOGGED_IN: 'Login successful',
     USER_LOGGED_OUT: 'Logout successful',
     USER_VERIFIED: 'User verified successfully',
+    USER_AUTH_CHECKED: 'User checked successfully',
     RESET_PASSWORD_EMAIL_SENT: 'A password reset link has been sent to your email',
     RESET_PASSWORD_SUCCESS: 'Password reset successful',
+
 
     //JWT messages
     NEW_TOKEN_GENERATED: 'New access token generated',
@@ -28,9 +28,12 @@ export const MESSAGES = {
     RESET_PASSWORD_TOKEN_EXPIRED: 'Reset password token expired',
 
     // JWT messages
-    TOKEN_EXPIRED: 'Refresh token expired',
-    TOKEN_INVALID: 'Invalid refresh token',
-    TOKEN_MISSING: 'Refresh token missing',
+    REFRESH_TOKEN_EXPIRED: 'Refresh token expired',
+    REFRESH_TOKEN_INVALID: 'Invalid refresh token',
+    REFRESH_TOKEN_MISSING: 'Refresh token missing',
+    ACCESS_TOKEN_INVALID: 'Invalid access token',
+    ACCESS_TOKEN_EXPIRED: 'Access token expired',
+    ACCESS_TOKEN_MISSING: 'Access token missing',
 
     // Validation messages
     VALIDATION_ERROR: 'Invalid request data',

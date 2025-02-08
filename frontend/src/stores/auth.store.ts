@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import * as authApi from '@/services/api/auth.api';
-import { clearAccessToken } from '@/utils/token.utils';
 
 import { UserInterface } from '@/types/common/user.types';
 type AuthStates = {
@@ -40,7 +39,6 @@ export const useAuthStore = create<AuthStates & AuthActions>((set, get) => ({
   },
 
   unAuthenticate: async () => {
-    clearAccessToken();
     set({ user: null, isAuthenticated: false });
   },
 }));

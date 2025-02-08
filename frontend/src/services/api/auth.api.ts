@@ -3,6 +3,9 @@ import axios from '@/services/api/axios.config';
 import {
   RegisterRequestBody,
   LoginRequestBody,
+  VerifyAccountRequestBody,
+  ForgotPasswordRequestBody,
+  ResetPasswordRequestBody,
 } from '@/types/api/requests/auth.requests';
 
 import {
@@ -11,6 +14,7 @@ import {
   CheckAuthResponseData,
 } from '@/types/api/responses/auth.responses';
 import { ApiResponse } from '@/types/api/responses/response.types';
+import { clearAccessToken } from '@/utils/token.utils';
 
 export const register = async (
   registerData: RegisterRequestBody
@@ -18,6 +22,16 @@ export const register = async (
   const response = await axios.post<ApiResponse<RegisterResponseData>>(
     '/auth/register',
     registerData
+  );
+  return response.data;
+};
+
+export const verifyAccount = async (
+  verifyAccountData: VerifyAccountRequestBody
+): Promise<ApiResponse<null>> => {
+  const response = await axios.post<ApiResponse<null>>(
+    '/auth/verify-account',
+    verifyAccountData
   );
   return response.data;
 };
@@ -32,14 +46,36 @@ export const login = async (
   return response.data;
 };
 
-export const logout = async (): Promise<void> => {
-  await axios.post('/auth/logout');
+export const logout = async (): Promise<ApiResponse<null>> => {
+  const response = await axios.post('/auth/logout');
+  clearAccessToken();
+  return response.data;
 };
 
 export const checkAuth = async (): Promise<
   ApiResponse<CheckAuthResponseData>
 > => {
   const response =
-    await axios.get<ApiResponse<CheckAuthResponseData>>('/auth/check');
+    await axios.post<ApiResponse<CheckAuthResponseData>>('/auth/check');
+  return response.data;
+};
+
+export const forgotPassword = async (
+  forgotPasswordData: ForgotPasswordRequestBody
+): Promise<ApiResponse<null>> => {
+  const response = await axios.post<ApiResponse<null>>(
+    '/auth/forgot-password',
+    forgotPasswordData
+  );
+  return response.data;
+};
+
+export const resetPassword = async (
+  resetPasswordData: ResetPasswordRequestBody
+): Promise<ApiResponse<null>> => {
+  const response = await axios.post<ApiResponse<null>>(
+    '/auth/reset-password',
+    resetPasswordData
+  );
   return response.data;
 };

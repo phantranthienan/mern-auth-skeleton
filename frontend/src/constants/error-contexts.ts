@@ -3,7 +3,8 @@ export const ERROR_CONTEXTS = {
   REGISTER: 'Registration',
   LOGIN: 'Login',
   LOGOUT: 'Logout',
-  VERIFY_USER: 'User Verification',
+  VERIFY_ACCOUNT: 'Account Verification',
   CHECK_AUTH: 'Auth Check',
+  FORGOT_PASSWORD: 'Forgot Password',
   RESET_PASSWORD: 'Password Reset',
 } as const;

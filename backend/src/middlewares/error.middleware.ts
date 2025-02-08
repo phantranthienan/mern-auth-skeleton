@@ -22,14 +22,18 @@ export const errorHandler = (
 
         const response = errorResponse(MESSAGES.VALIDATION_ERROR, errors);
         res.status(400).json(response);
+        return;
     }
 
     if (err instanceof ApiError) {
         const response = errorResponse(err.message);
+        console.log('❌ ApiError:', response);
         res.status(err.statusCode).json(response);
+        return;
     }
 
     console.error('❌ Unexpected Error:', err);
     const response = errorResponse(MESSAGES.INTERNAL_SERVER_ERROR);
     res.status(500).json(response);
+    return;
 };

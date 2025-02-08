@@ -1,7 +1,8 @@
 import express from 'express';
 import { validateRequest } from '@/middlewares/validation.middleware';
 import { registerSchema, loginSchema, verifyAccountSchema, forgotPasswordSchema, resetPasswordSchema } from '@/utils/validations/auth.validation';
-import { registerController, loginController, logoutController, refreshTokenController, verifyAccountController, forgotPasswordController, resetPasswordController } from '@/controllers/auth.controller';
+import { registerController, loginController, logoutController, refreshTokenController, verifyAccountController, forgotPasswordController, resetPasswordController, checkAuthController } from '@/controllers/auth.controller';
+import { authMiddleware } from '@/middlewares/auth.middleware';
 
 const router = express.Router();
 
@@ -18,6 +19,8 @@ router.post('/refresh-token', refreshTokenController);
 router.post('/forgot-password', validateRequest(forgotPasswordSchema), forgotPasswordController);
 
 router.post('/reset-password', validateRequest(resetPasswordSchema), resetPasswordController);
+
+router.post('/check', authMiddleware, checkAuthController);
 
 /**
  * @swagger

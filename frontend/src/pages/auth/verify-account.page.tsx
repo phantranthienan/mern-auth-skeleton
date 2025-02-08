@@ -1,8 +1,22 @@
 import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import * as authApi from '@/services/api/auth.api';
+import useNotification from '@/hooks/use-notification';
+import { ERROR_CONTEXTS } from '@/constants/error-contexts';
+import { AxiosError } from 'axios';
+import { MESSAGES } from '@/constants/messages';
 
 const VerifyAccountPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { handleSuccess, handleError } = useNotification();
+
   const [otp, setOtp] = React.useState(['', '', '', '', '', '']);
   const inputRefs = React.useRef<HTMLInputElement[]>([]);
+
+  const searchParams = new URLSearchParams(location.search);
+  const email = searchParams.get('email');
 
   useEffect(() => {
     inputRefs.current[0].focus();
@@ -16,9 +30,24 @@ const VerifyAccountPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const otpValue = otp.join('');
-    console.log('OTP:', otpValue);
+    // Call API to verify OTP
+    try {
+      const response = await authApi.verifyAccount({
+        email: email as string,
+        otp: otpValue,
+      });
+      handleSuccess(response.message + ', please login');
+      navigate('/auth/login');
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        if (error.response?.data.message === MESSAGES.USER_ALREADY_VERIFIED) {
+          navigate('/auth/login');
+        }
+      }
+      handleError(error, ERROR_CONTEXTS.VERIFY_ACCOUNT);
+    }
   };
 
   const handleChange = (index: number, value: string) => {

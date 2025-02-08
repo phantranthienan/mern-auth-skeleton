@@ -6,7 +6,7 @@ import { refreshTokenCookieOptions } from '@/config/cookies';
 import { MESSAGES } from '@/constants/messages';
 import { ApiResponse } from '@/types/responses/response.type';
 import { RegisterRequestBody, LoginRequestBody, VerifyAccountRequestBody, ForgotPasswordRequestBody, ResetPasswordRequestBody } from '@/types/requests/auth.requests';
-import { RegisterResponseData, LoginResponseData, RefreshTokenResponseData } from '@/types/responses/auth.responses';
+import { RegisterResponseData, LoginResponseData, RefreshTokenResponseData, CheckAuthResponseData } from '@/types/responses/auth.responses';
 
 export const registerController = async (
     req: Request<{},{},RegisterRequestBody>, 
@@ -18,8 +18,10 @@ export const registerController = async (
     const response = successResponse<RegisterResponseData>(
         MESSAGES.USER_REGISTERED, 
         { 
-            ...newUser,
-            _id: newUser._id.toString(),
+            user: {
+                ...newUser,
+                _id: newUser._id.toString(),
+            }
         }
     );
 
@@ -43,20 +45,26 @@ export const loginController = async (
     res: Response<ApiResponse<LoginResponseData>>
 ) => {
     const { email, password } = req.body;
-    const { accessToken, refreshToken } = await loginUser(email, password);
+    const { accessToken, refreshToken, userObject } = await loginUser(email, password);
 
     res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
 
     const response = successResponse<LoginResponseData>(
         MESSAGES.USER_LOGGED_IN, 
-        { accessToken }
+        { 
+            accessToken, 
+            user: { 
+                ...userObject, 
+                _id: userObject._id.toString() 
+            } 
+        }
     );
 
     res.status(200).json(response);
 };
 
 export const logoutController = async (
-    _req: Request,
+    req: Request,
     res: Response<ApiResponse<null>>
 ) => {
     res.clearCookie('refreshToken');
@@ -99,5 +107,22 @@ export const resetPasswordController = async (
     await resetPassword(email, token, newPassword);
     
     const response = successResponse<null>(MESSAGES.RESET_PASSWORD_SUCCESS, null);
+    res.status(200).json(response);
+};
+
+export const checkAuthController = async (
+    req: Request,
+    res: Response<ApiResponse<CheckAuthResponseData>>
+) => {
+    const user = req.user;
+    const response = successResponse<CheckAuthResponseData>(
+        MESSAGES.USER_AUTH_CHECKED, 
+        { 
+            user: { 
+                ...user, 
+                _id: user._id.toString() 
+            }
+        }
+    );
     res.status(200).json(response);
 };

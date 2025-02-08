@@ -32,6 +32,7 @@ const userSchema = new Schema({
 const transformFunction = (_: any, ret: any) => {
     delete ret.__v;
     delete ret.password;
+    delete ret.isVerified;
     delete ret.verificationCode;
     delete ret.verificationCodeExpiresAt;
     delete ret.resetPasswordToken;
