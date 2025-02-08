@@ -11,6 +11,10 @@ export interface VerifyAccountRequestBody {
     otp: string;
 }
 
+export interface ResendVerificationOtpRequestBody {
+    email: string;
+}
+
 export interface LoginRequestBody {
     email: string;
     password: string;

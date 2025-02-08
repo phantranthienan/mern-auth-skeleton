@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { loginUser, refreshAccessToken, registerUser, verifyUserOtp, forgotPassword, resetPassword } from '@/services/auth.service';
+import { loginUser, refreshAccessToken, registerUser, verifyUserOtp, forgotPassword, resetPassword, resendVerificationOtp } from '@/services/auth.service';
 import { successResponse } from '@/utils/response.util';
 
 import { refreshTokenCookieOptions } from '@/config/cookies';
 import { MESSAGES } from '@/constants/messages';
 import { ApiResponse } from '@/types/responses/response.type';
-import { RegisterRequestBody, LoginRequestBody, VerifyAccountRequestBody, ForgotPasswordRequestBody, ResetPasswordRequestBody } from '@/types/requests/auth.requests';
+import { RegisterRequestBody, LoginRequestBody, VerifyAccountRequestBody, ForgotPasswordRequestBody, ResetPasswordRequestBody, ResendVerificationOtpRequestBody } from '@/types/requests/auth.requests';
 import { RegisterResponseData, LoginResponseData, RefreshTokenResponseData, CheckAuthResponseData } from '@/types/responses/auth.responses';
 
 export const registerController = async (
@@ -39,6 +39,17 @@ export const verifyAccountController = async (
     
     res.status(200).json(response);
 };
+
+export const resendVerificationOtpController = async (
+    req: Request<{},{},ResendVerificationOtpRequestBody>,
+    res: Response<ApiResponse<null>>
+) => {
+    const { email } = req.body;
+    await resendVerificationOtp(email);
+
+    const response = successResponse<null>(MESSAGES.VERIFICATION_CODE_SENT, null);
+    res.status(200).json(response);
+}
 
 export const loginController = async (
     req: Request<{}, {}, LoginRequestBody>, 

@@ -6,6 +6,7 @@ import {
   VerifyAccountRequestBody,
   ForgotPasswordRequestBody,
   ResetPasswordRequestBody,
+  ResendVerificationOtpRequestBody,
 } from '@/types/api/requests/auth.requests';
 
 import {
@@ -32,6 +33,16 @@ export const verifyAccount = async (
   const response = await axios.post<ApiResponse<null>>(
     '/auth/verify-account',
     verifyAccountData
+  );
+  return response.data;
+};
+
+export const resendVerificationOtp = async (
+  resendVerificationOtpData: ResendVerificationOtpRequestBody
+): Promise<ApiResponse<null>> => {
+  const response = await axios.post<ApiResponse<null>>(
+    '/auth/resend-verification',
+    resendVerificationOtpData
   );
   return response.data;
 };

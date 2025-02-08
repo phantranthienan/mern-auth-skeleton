@@ -2,6 +2,7 @@ export const MESSAGES = {
   //************ SUCCESS MESSAGES ***************/
   // Auth messages
   USER_REGISTERED: 'User registered successfully, please verify your email',
+  VERIFICATION_CODE_SENT: 'Verification code sent to your email',
   USER_LOGGED_IN: 'Login successful',
   USER_LOGGED_OUT: 'Logout successful',
   USER_VERIFIED: 'User verified successfully',

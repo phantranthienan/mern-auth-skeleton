@@ -94,6 +94,17 @@ const VerifyAccountPage = () => {
     }
   };
 
+  const handleResend = async () => {
+    try {
+      const response = await authApi.resendVerificationOtp({
+        email: email as string,
+      });
+      handleSuccess(response.message);
+    } catch (error) {
+      handleError(error, ERROR_CONTEXTS.RESEND_OTP);
+    }
+  };
+
   return (
     <div>
       <header className="mb-8 text-center">
@@ -131,7 +142,7 @@ const VerifyAccountPage = () => {
           Didn't receive the code?{' '}
           <button
             className="link link-primary cursor-pointer border-none bg-transparent"
-            onClick={() => alert('Resend code')}
+            onClick={handleResend}
           >
             Resend
           </button>

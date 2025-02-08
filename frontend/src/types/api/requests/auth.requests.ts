@@ -1,4 +1,5 @@
 // Type definitions for requests related to authentication
+
 export interface RegisterRequestBody {
   email: string;
   password: string;
@@ -8,6 +9,10 @@ export interface RegisterRequestBody {
 export interface VerifyAccountRequestBody {
   email: string;
   otp: string;
+}
+
+export interface ResendVerificationOtpRequestBody {
+  email: string;
 }
 
 export interface LoginRequestBody {

@@ -1,7 +1,7 @@
 import express from 'express';
 import { validateRequest } from '@/middlewares/validation.middleware';
 import { registerSchema, loginSchema, verifyAccountSchema, forgotPasswordSchema, resetPasswordSchema } from '@/utils/validations/auth.validation';
-import { registerController, loginController, logoutController, refreshTokenController, verifyAccountController, forgotPasswordController, resetPasswordController, checkAuthController } from '@/controllers/auth.controller';
+import { registerController, loginController, logoutController, refreshTokenController, verifyAccountController, forgotPasswordController, resetPasswordController, checkAuthController, resendVerificationOtpController } from '@/controllers/auth.controller';
 import { authMiddleware } from '@/middlewares/auth.middleware';
 
 const router = express.Router();
@@ -9,6 +9,8 @@ const router = express.Router();
 router.post('/register', validateRequest(registerSchema), registerController);
 
 router.post('/verify-account', validateRequest(verifyAccountSchema), verifyAccountController); 
+
+router.post('/resend-verification', resendVerificationOtpController);
 
 router.post('/login', validateRequest(loginSchema), loginController);
 
@@ -149,6 +151,48 @@ router.post('/check', authMiddleware, checkAuthController);
  *       500:
  *         description: Internal server error.
  */
+
+/**
+ * @swagger
+ * /auth/resend-verification:
+ *   post:
+ *     summary: Resend verification code
+ *     description: Resends the 6-digit verification code to the user's email if they haven't verified their account yet.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Verification code sent to your email.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Verification code sent to your email"
+ *       400:
+ *         description: User already verified.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Internal server error.
+ */
+
 
 /**
  * @swagger
@@ -330,4 +374,46 @@ router.post('/check', authMiddleware, checkAuthController);
  *       500:
  *         description: Internal server error.
  */
+
+/**
+ * @swagger
+ * /auth/check:
+ *   post:
+ *     summary: Check user authentication status
+ *     description: Verifies if the user's access token is valid. Requires a valid access token in the Authorization header.
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []  # Indicates that the route requires Bearer token (JWT)
+ *     responses:
+ *       200:
+ *         description: User is authenticated.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User is authenticated"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                       example: "60bbf824f72e8e3a69cb3d1a"
+ *                     username: 
+ *                       type: string
+ *                       example: "user"
+ *                     email:
+ *                       type: string
+ *                       example: "user@example.com"
+ *       401:
+ *         description: Unauthorized. Invalid or missing access token.
+ *       500:
+ *         description: Internal server error.
+ */
+
 export default router;

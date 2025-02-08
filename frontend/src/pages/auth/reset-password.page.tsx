@@ -97,7 +97,7 @@ const ResetPasswordPage = () => {
           <div className="input input-bordered w-full">
             <LockKeyhole className="text-base-content/40 pointer-events-none" />
             <input
-              type={showPassword ? 'text' : 'password'}
+              type="password"
               placeholder="•••••••••••••••••••••"
               {...register('confirmNewPassword')}
             />

@@ -89,6 +89,25 @@ export const verifyUserOtp = async (email: string, otp: string) => {
     await user.save();
 }
 
+export const resendVerificationOtp = async (email: string) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new NotFoundError(MESSAGES.USER_NOT_FOUND);
+    }
+    if (user.isVerified) {
+        throw new BadRequestError(MESSAGES.USER_ALREADY_VERIFIED);
+    }
+
+    const newOtp = generateOTP();
+    const otpExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    user.verificationCode = newOtp;
+    user.verificationCodeExpiresAt = otpExpiresAt;
+    await user.save();
+
+    await sendVerificationOtpEmail(email, newOtp);
+};
+
 export const loginUser = async (email: string, password: string) => {
     const user = await User.findOne({ email });
     
@@ -140,6 +159,9 @@ export const forgotPassword = async (email: string) => {
     const user = await User.findOne({ email });
     if (!user) {
         throw new NotFoundError(MESSAGES.USER_NOT_FOUND);
+    }
+    if (!user.isVerified) {
+        throw new UnauthorizedError(MESSAGES.USER_NOT_VERIFIED);
     }
 
     // Generate a random token (you can also hash it if desired)

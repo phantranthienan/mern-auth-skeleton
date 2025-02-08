@@ -27,12 +27,10 @@ export const errorHandler = (
 
     if (err instanceof ApiError) {
         const response = errorResponse(err.message);
-        console.log('❌ ApiError:', response);
         res.status(err.statusCode).json(response);
         return;
     }
 
-    console.error('❌ Unexpected Error:', err);
     const response = errorResponse(MESSAGES.INTERNAL_SERVER_ERROR);
     res.status(500).json(response);
     return;
