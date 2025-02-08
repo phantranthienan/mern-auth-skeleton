@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-const envFile = `.env.${process.env.NODE_ENV || 'development'}`;
-dotenv.config({ path: path.resolve(__dirname, `../../${envFile}`) });
+// const envFile = `.env.${process.env.NODE_ENV || 'development'}`;
+// dotenv.config({ path: path.resolve(__dirname, `../../${envFile}`) });
+
+dotenv.config();
 
 export const ENV = {
     NODE_ENV: process.env.NODE_ENV || 'development',
