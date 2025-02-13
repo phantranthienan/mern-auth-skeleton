@@ -1,4 +1,4 @@
-import AppWithRoutes from './routes/app-with-routes';
+import AppRoutes from './routes/app-routes';
 import { BrowserRouter } from 'react-router-dom';
 import ReactQueryProvider from './providers/react-query.provider';
 
@@ -9,7 +9,7 @@ const App = () => {
     <BrowserRouter>
       <ReactQueryProvider>
         <Notification />
-        <AppWithRoutes />
+        <AppRoutes />
       </ReactQueryProvider>
     </BrowserRouter>
   );

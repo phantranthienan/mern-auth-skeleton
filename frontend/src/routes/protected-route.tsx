@@ -1,12 +1,13 @@
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/stores/auth.store';
+import useNotification from '@/hooks/use-notification';
 import Loading from '@/components/ui/loading';
 import { LINKS } from '@/constants/links';
-import { useEffect, useState } from 'react';
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isCheckingAuth, checkAuth } = useAuthStore();
-
+  const { handleError } = useNotification();
   // track whether we've already attempted a check in this render lifecycle
   const [didAttemptCheck, setDidAttemptCheck] = useState(false);
 
@@ -15,7 +16,7 @@ const ProtectedRoute = () => {
       try {
         await checkAuth();
       } catch (error) {
-        console.error(error);
+        handleError(error);
       } finally {
         setDidAttemptCheck(true);
       }
@@ -24,7 +25,7 @@ const ProtectedRoute = () => {
       // if we haven't attempted a check in this session, do it now
       attemptCheck();
     }
-  }, [checkAuth, didAttemptCheck]);
+  }, [checkAuth, didAttemptCheck, handleError]);
 
   // if still checking or haven't attempted the check yet, show a loader
   if (isCheckingAuth || !didAttemptCheck) {

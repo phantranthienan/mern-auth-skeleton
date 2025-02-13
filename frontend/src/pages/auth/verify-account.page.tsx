@@ -32,7 +32,6 @@ const VerifyAccountPage = () => {
 
   const handleSubmit = async () => {
     const otpValue = otp.join('');
-    // Call API to verify OTP
     try {
       const response = await authApi.verifyAccount({
         email: email as string,

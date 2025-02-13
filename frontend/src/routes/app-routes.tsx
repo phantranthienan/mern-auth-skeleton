@@ -14,7 +14,7 @@ const ForgotPasswordPage = lazy(() => import('@/pages/auth/forgot-password.page'
 const ResetPasswordPage = lazy(() => import('@/pages/auth/reset-password.page'));
 const NotFoundPage = lazy(() => import('@/pages/not-found.page'));
 
-const AppWithRoutes = () => {
+const AppRoutes = () => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
@@ -37,4 +37,4 @@ const AppWithRoutes = () => {
   );
 };
 
-export default AppWithRoutes;
+export default AppRoutes;
